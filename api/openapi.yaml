@@ -1,0 +1,89 @@
+openapi: 3.0.0
+info:
+  title: job_offer
+  version: "1.0"
+servers:
+- url: http://localhost:3000
+paths:
+  /job_offer:
+    get:
+      operationId: get-job_offer
+      requestBody:
+        $ref: '#/components/requestBodies/inline_object'
+        content:
+          application/json:
+            schema:
+              properties:
+                message:
+                  type: string
+                result:
+                  $ref: '#/components/schemas/nest_2_joboffer'
+              type: object
+      responses: {}
+      summary: job_offer
+      tags: []
+    post:
+      operationId: post-job_offer
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/result_joboffer'
+          description: OK
+      summary: result
+      tags: []
+components:
+  requestBodies:
+    inline_object:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/inline_object'
+  schemas:
+    nest_2_joboffer:
+      properties:
+        prefCode:
+          description: 県コード
+          type: string
+        prefName:
+          description: 県名
+          type: string
+        year:
+          description: 年度
+          type: string
+        matter:
+          description: 表示内容
+          type: string
+        class:
+          description: 表示分類
+          type: string
+        data:
+          description: 数値
+          type: string
+    inline_object:
+      properties:
+        message:
+          type: string
+        result:
+          $ref: '#/components/schemas/nest_2_joboffer'
+      type: object
+    result_joboffer:
+      example:
+        finding_employment_count: 1.4658129805029452
+        broadName: broadName
+        valid_jobfinder: 6.027456183070403
+        valid_job_offer_number: 0.8008281904610115
+      properties:
+        broadName:
+          description: 職業大分類1
+          type: string
+        valid_job_offer_number:
+          description: 有効求人数
+          type: number
+        valid_jobfinder:
+          description: 有効就職者
+          type: number
+        finding_employment_count:
+          description: 就職件数
+          type: number
