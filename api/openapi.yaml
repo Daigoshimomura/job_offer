@@ -33,13 +33,81 @@ paths:
           description: OK
       summary: result
       tags: []
+  /occupation:
+    get:
+      operationId: get-occupation
+      requestBody:
+        $ref: '#/components/requestBodies/inline_object_1'
+        content:
+          application/json:
+            schema:
+              properties:
+                message:
+                  type: string
+                ? ""
+                : $ref: '#/components/schemas/occupation_major_classification'
+              type: object
+      responses: {}
+      summary: occupation
+      tags: []
+    post:
+      operationId: post-occupation
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+          description: OK
+      summary: result
+      tags: []
+  /total_population:
+    get:
+      operationId: get-total_population
+      requestBody:
+        $ref: '#/components/requestBodies/inline_object_2'
+        content:
+          application/json:
+            examples: {}
+            schema:
+              properties:
+                message:
+                  description: メッセージ
+                  type: string
+                'result ':
+                  $ref: '#/components/schemas/nest_2_total_population'
+              type: object
+      responses: {}
+      summary: total_population
+      tags: []
+    post:
+      operationId: post-total_population
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/result__total_population'
+          description: OK
+      summary: result
+      tags: []
 components:
   requestBodies:
+    inline_object_1:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/inline_object_1'
     inline_object:
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/inline_object'
+    inline_object_2:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/inline_object_2'
   schemas:
     nest_2_joboffer:
       properties:
@@ -86,4 +154,91 @@ components:
           type: number
         finding_employment_count:
           description: 就職件数
+          type: number
+    occupation_major_classification:
+      properties:
+        iscoCode:
+          description: 職業大分類コード
+          type: string
+        iscoName:
+          description: 職業大分類名
+          type: string
+    inline_object_1:
+      properties:
+        message:
+          type: string
+        ? ""
+        : $ref: '#/components/schemas/occupation_major_classification'
+      type: object
+    occupation_middle_category:
+      example:
+        ismcoCode: ismcoCode
+        iscoCode: iscoCode
+        ismcoName: ismcoName
+      properties:
+        iscoCode:
+          description: 職業大分類コード
+          type: string
+        ismcoCode:
+          description: 職業中分類
+          type: string
+        ismcoName:
+          description: 職業中分類名
+          type: string
+    inline_response_200:
+      example:
+        ? ""
+        : ismcoCode: ismcoCode
+          iscoCode: iscoCode
+          ismcoName: ismcoName
+        message: message
+      properties:
+        message:
+          type: string
+        ? ""
+        : $ref: '#/components/schemas/occupation_middle_category'
+    data_total_population:
+      properties:
+        year:
+          description: 年度
+          maximum: 2016
+          minimum: 1995
+          type: number
+        value:
+          description: 値
+          type: number
+    nest_3__total_population:
+      properties:
+        label:
+          type: string
+        data:
+          $ref: '#/components/schemas/data_total_population'
+    nest_2_total_population:
+      properties:
+        boundaryYear:
+          type: number
+        data:
+          $ref: '#/components/schemas/nest_3__total_population'
+    inline_object_2:
+      properties:
+        message:
+          description: メッセージ
+          type: string
+        'result ':
+          $ref: '#/components/schemas/nest_2_total_population'
+      type: object
+    result__total_population:
+      example:
+        bitrh_number: 6.027456183070403
+        died_number: 1.4658129805029452
+        total_population: 0.8008281904610115
+      properties:
+        total_population:
+          description: 総人口
+          type: number
+        bitrh_number:
+          description: 出生数
+          type: number
+        died_number:
+          description: 死亡数
           type: number

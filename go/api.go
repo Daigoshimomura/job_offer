@@ -19,7 +19,11 @@ import (
 // pass the data to a DefaultApiServicer to perform the required actions, then write the service results to the http response.
 type DefaultApiRouter interface { 
 	GetJobOffer(http.ResponseWriter, *http.Request)
+	GetOccupation(http.ResponseWriter, *http.Request)
+	GetTotalPopulation(http.ResponseWriter, *http.Request)
 	PostJobOffer(http.ResponseWriter, *http.Request)
+	PostOccupation(http.ResponseWriter, *http.Request)
+	PostTotalPopulation(http.ResponseWriter, *http.Request)
 }
 
 
@@ -29,5 +33,9 @@ type DefaultApiRouter interface {
 // and updated with the logic required for the API.
 type DefaultApiServicer interface { 
 	GetJobOffer(InlineObject) (interface{}, error)
+	GetOccupation(InlineObject1) (interface{}, error)
+	GetTotalPopulation(InlineObject2) (interface{}, error)
 	PostJobOffer() (interface{}, error)
+	PostOccupation() (interface{}, error)
+	PostTotalPopulation() (interface{}, error)
 }
