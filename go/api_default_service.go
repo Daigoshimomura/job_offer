@@ -11,10 +11,11 @@ package openapi
 
 import (
 	"errors"
+	"log"
 )
 
 // DefaultApiService is a service that implents the logic for the DefaultApiServicer
-// This service should implement the business logic for every endpoint for the DefaultApi API. 
+// This service should implement the business logic for every endpoint for the DefaultApi API.
 // Include any external packages or services that will be required by this service.
 type DefaultApiService struct {
 }
@@ -28,7 +29,12 @@ func NewDefaultApiService() DefaultApiServicer {
 func (s *DefaultApiService) GetJobOffer(inlineObject InlineObject) (interface{}, error) {
 	// TODO - update GetJobOffer with the required logic for this service method.
 	// Add api_default_service.go to the .openapi-generator-ignore to avoid overwriting this service implementation when updating open api generation.
-	return nil, errors.New("service method 'GetJobOffer' not implemented")
+
+	// 中身を見てみると、取れてる
+	log.Printf("%v", inlineObject.Result.PrefCode)
+	// リターンするオブジェクトを設定する
+	res := &ResultJoboffer{BroadName: "test"}
+	return res, nil
 }
 
 // GetOccupation - occupation

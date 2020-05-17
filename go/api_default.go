@@ -55,7 +55,7 @@ func (c *DefaultApiController) Routes() Routes {
 		},
 		{
 			"PostOccupation",
-			strings.ToUppe	r("Post"),
+			strings.ToUpper("Post"),
 			"/occupation",
 			c.PostOccupation,
 		},
@@ -70,11 +70,12 @@ func (c *DefaultApiController) Routes() Routes {
 
 // GetJobOffer - job_offer
 func (c *DefaultApiController) GetJobOffer(w http.ResponseWriter, r *http.Request) {
-	inlineObject := &InlineObject{}
-	if err := json.NewDecoder(r.Body).Decode(&inlineObject); err != nil {
-		w.WriteHeader(500)
-		return
-	}
+	// クエリパラメータを取り出す
+	params := r.URL.Query()
+	// パラメータをjobOfferにセットする
+	rs := Nest2Joboffer{PrefCode: params.Get("prefCode"), PrefName: params.Get(("prefName"))}
+	// リクエスト用のオブジェクトにパラメータをセットする
+	inlineObject := &InlineObject{Result: rs}
 
 	result, err := c.service.GetJobOffer(*inlineObject)
 	if err != nil {
