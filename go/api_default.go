@@ -13,7 +13,8 @@ import (
 	"encoding/json"
 	"net/http"
 	"strings"
-	// "github.com/gorilla/mux"
+
+	//"github.com/gorilla/mux"
 )
 
 // A DefaultApiController binds http requests to an api service and writes the service results to the http response
@@ -23,12 +24,12 @@ type DefaultApiController struct {
 
 // NewDefaultApiController creates a default api controller
 func NewDefaultApiController(s DefaultApiServicer) Router {
-	return &DefaultApiController{service: s}
+	return &DefaultApiController{ service: s }
 }
 
 // Routes returns all of the api route for the DefaultApiController
 func (c *DefaultApiController) Routes() Routes {
-	return Routes{
+	return Routes{ 
 		{
 			"GetJobOffer",
 			strings.ToUpper("Get"),
@@ -47,107 +48,56 @@ func (c *DefaultApiController) Routes() Routes {
 			"/total_population",
 			c.GetTotalPopulation,
 		},
-		{
-			"PostJobOffer",
-			strings.ToUpper("Post"),
-			"/job_offer",
-			c.PostJobOffer,
-		},
-		{
-			"PostOccupation",
-			strings.ToUppe	r("Post"),
-			"/occupation",
-			c.PostOccupation,
-		},
-		{
-			"PostTotalPopulation",
-			strings.ToUpper("Post"),
-			"/total_population",
-			c.PostTotalPopulation,
-		},
 	}
 }
 
 // GetJobOffer - job_offer
-func (c *DefaultApiController) GetJobOffer(w http.ResponseWriter, r *http.Request) {
+func (c *DefaultApiController) GetJobOffer(w http.ResponseWriter, r *http.Request) { 
 	inlineObject := &InlineObject{}
 	if err := json.NewDecoder(r.Body).Decode(&inlineObject); err != nil {
 		w.WriteHeader(500)
 		return
 	}
-
+	
 	result, err := c.service.GetJobOffer(*inlineObject)
 	if err != nil {
 		w.WriteHeader(500)
 		return
 	}
-
+	
 	EncodeJSONResponse(result, nil, w)
 }
 
 // GetOccupation - occupation
-func (c *DefaultApiController) GetOccupation(w http.ResponseWriter, r *http.Request) {
+func (c *DefaultApiController) GetOccupation(w http.ResponseWriter, r *http.Request) { 
 	inlineObject1 := &InlineObject1{}
 	if err := json.NewDecoder(r.Body).Decode(&inlineObject1); err != nil {
 		w.WriteHeader(500)
 		return
 	}
-
+	
 	result, err := c.service.GetOccupation(*inlineObject1)
 	if err != nil {
 		w.WriteHeader(500)
 		return
 	}
-
+	
 	EncodeJSONResponse(result, nil, w)
 }
 
 // GetTotalPopulation - total_population
-func (c *DefaultApiController) GetTotalPopulation(w http.ResponseWriter, r *http.Request) {
+func (c *DefaultApiController) GetTotalPopulation(w http.ResponseWriter, r *http.Request) { 
 	inlineObject2 := &InlineObject2{}
 	if err := json.NewDecoder(r.Body).Decode(&inlineObject2); err != nil {
 		w.WriteHeader(500)
 		return
 	}
-
+	
 	result, err := c.service.GetTotalPopulation(*inlineObject2)
 	if err != nil {
 		w.WriteHeader(500)
 		return
 	}
-
-	EncodeJSONResponse(result, nil, w)
-}
-
-// PostJobOffer - result
-func (c *DefaultApiController) PostJobOffer(w http.ResponseWriter, r *http.Request) {
-	result, err := c.service.PostJobOffer()
-	if err != nil {
-		w.WriteHeader(500)
-		return
-	}
-
-	EncodeJSONResponse(result, nil, w)
-}
-
-// PostOccupation - result
-func (c *DefaultApiController) PostOccupation(w http.ResponseWriter, r *http.Request) {
-	result, err := c.service.PostOccupation()
-	if err != nil {
-		w.WriteHeader(500)
-		return
-	}
-
-	EncodeJSONResponse(result, nil, w)
-}
-
-// PostTotalPopulation - result
-func (c *DefaultApiController) PostTotalPopulation(w http.ResponseWriter, r *http.Request) {
-	result, err := c.service.PostTotalPopulation()
-	if err != nil {
-		w.WriteHeader(500)
-		return
-	}
-
+	
 	EncodeJSONResponse(result, nil, w)
 }

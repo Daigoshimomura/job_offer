@@ -14,5 +14,5 @@ type InlineObject2 struct {
 	// メッセージ
 	Message string `json:"message,omitempty"`
 
-	Result Nest2TotalPopulation `json:"result ,omitempty"`
+	Result ResultTotalPopulation `json:"result ,omitempty"`
 }

@@ -11,7 +11,8 @@ package openapi
 
 type InlineObject struct {
 
+	// メッセージ 
 	Message string `json:"message,omitempty"`
 
-	Result Nest2Joboffer `json:"result,omitempty"`
+	Result ResultJoboffer `json:"result,omitempty"`
 }

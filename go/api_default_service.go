@@ -44,24 +44,3 @@ func (s *DefaultApiService) GetTotalPopulation(inlineObject2 InlineObject2) (int
 	// Add api_default_service.go to the .openapi-generator-ignore to avoid overwriting this service implementation when updating open api generation.
 	return nil, errors.New("service method 'GetTotalPopulation' not implemented")
 }
-
-// PostJobOffer - result
-func (s *DefaultApiService) PostJobOffer() (interface{}, error) {
-	// TODO - update PostJobOffer with the required logic for this service method.
-	// Add api_default_service.go to the .openapi-generator-ignore to avoid overwriting this service implementation when updating open api generation.
-	return nil, errors.New("service method 'PostJobOffer' not implemented")
-}
-
-// PostOccupation - result
-func (s *DefaultApiService) PostOccupation() (interface{}, error) {
-	// TODO - update PostOccupation with the required logic for this service method.
-	// Add api_default_service.go to the .openapi-generator-ignore to avoid overwriting this service implementation when updating open api generation.
-	return nil, errors.New("service method 'PostOccupation' not implemented")
-}
-
-// PostTotalPopulation - result
-func (s *DefaultApiService) PostTotalPopulation() (interface{}, error) {
-	// TODO - update PostTotalPopulation with the required logic for this service method.
-	// Add api_default_service.go to the .openapi-generator-ignore to avoid overwriting this service implementation when updating open api generation.
-	return nil, errors.New("service method 'PostTotalPopulation' not implemented")
-}

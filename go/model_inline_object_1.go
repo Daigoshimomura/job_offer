@@ -11,7 +11,8 @@ package openapi
 
 type InlineObject1 struct {
 
+	// メッセージ
 	Message string `json:"message,omitempty"`
 
-	 OccupationMajorClassification `json:",omitempty"`
+	Result OccupationMiddleCategory `json:"result,omitempty"`
 }
