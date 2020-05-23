@@ -10,7 +10,7 @@
 package openapi
 
 import (
-	"encoding/json"
+	//"encoding/json"
 	"net/http"
 	"strings"
 
@@ -53,13 +53,13 @@ func (c *DefaultApiController) Routes() Routes {
 
 // GetJobOffer - job_offer
 func (c *DefaultApiController) GetJobOffer(w http.ResponseWriter, r *http.Request) { 
-	inlineObject := &InlineObject{}
-	if err := json.NewDecoder(r.Body).Decode(&inlineObject); err != nil {
-		w.WriteHeader(500)
-		return
-	}
-	
-	result, err := c.service.GetJobOffer(*inlineObject)
+	query := r.URL.Query()
+	prefCode := query.Get("prefCode")
+	year := query.Get("year")
+	matter := query.Get("matter")
+	class := query.Get("class")
+	//変換しないといけない
+	result, err := c.service.GetJobOffer(prefCode, year, matter, class)
 	if err != nil {
 		w.WriteHeader(500)
 		return
@@ -70,13 +70,9 @@ func (c *DefaultApiController) GetJobOffer(w http.ResponseWriter, r *http.Reques
 
 // GetOccupation - occupation
 func (c *DefaultApiController) GetOccupation(w http.ResponseWriter, r *http.Request) { 
-	inlineObject1 := &InlineObject1{}
-	if err := json.NewDecoder(r.Body).Decode(&inlineObject1); err != nil {
-		w.WriteHeader(500)
-		return
-	}
-	
-	result, err := c.service.GetOccupation(*inlineObject1)
+	query := r.URL.Query()
+	iscoCode := query.Get("iscoCode")
+	result, err := c.service.GetOccupation(iscoCode)
 	if err != nil {
 		w.WriteHeader(500)
 		return
@@ -87,13 +83,11 @@ func (c *DefaultApiController) GetOccupation(w http.ResponseWriter, r *http.Requ
 
 // GetTotalPopulation - total_population
 func (c *DefaultApiController) GetTotalPopulation(w http.ResponseWriter, r *http.Request) { 
-	inlineObject2 := &InlineObject2{}
-	if err := json.NewDecoder(r.Body).Decode(&inlineObject2); err != nil {
-		w.WriteHeader(500)
-		return
-	}
-	
-	result, err := c.service.GetTotalPopulation(*inlineObject2)
+	query := r.URL.Query()
+	prefCode := query.Get("prefCode")
+	cityCode := query.Get("cityCode")
+	//変換しないといけない
+	result, err := c.service.GetTotalPopulation(prefCode, cityCode)
 	if err != nil {
 		w.WriteHeader(500)
 		return

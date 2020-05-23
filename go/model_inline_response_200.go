@@ -11,7 +11,8 @@ package openapi
 
 type InlineResponse200 struct {
 
+	// メッセージ
 	Message string `json:"message,omitempty"`
 
-	 OccupationMiddleCategory `json:",omitempty"`
+	Result ResultJoboffer `json:"result,omitempty"`
 }

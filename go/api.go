@@ -29,7 +29,7 @@ type DefaultApiRouter interface {
 // while the service implementation can ignored with the .openapi-generator-ignore file 
 // and updated with the logic required for the API.
 type DefaultApiServicer interface { 
-	GetJobOffer(InlineObject) (interface{}, error)
-	GetOccupation(InlineObject1) (interface{}, error)
-	GetTotalPopulation(InlineObject2) (interface{}, error)
+	GetJobOffer(float32, float32, float32, float32) (interface{}, error)
+	GetOccupation(string) (interface{}, error)
+	GetTotalPopulation(float32, float32) (interface{}, error)
 }

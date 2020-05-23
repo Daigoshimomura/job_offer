@@ -25,21 +25,21 @@ func NewDefaultApiService() DefaultApiServicer {
 }
 
 // GetJobOffer - job_offer
-func (s *DefaultApiService) GetJobOffer(inlineObject InlineObject) (interface{}, error) {
+func (s *DefaultApiService) GetJobOffer(prefCode float32, year float32, matter float32, class float32) (interface{}, error) {
 	// TODO - update GetJobOffer with the required logic for this service method.
 	// Add api_default_service.go to the .openapi-generator-ignore to avoid overwriting this service implementation when updating open api generation.
 	return nil, errors.New("service method 'GetJobOffer' not implemented")
 }
 
 // GetOccupation - occupation
-func (s *DefaultApiService) GetOccupation(inlineObject1 InlineObject1) (interface{}, error) {
+func (s *DefaultApiService) GetOccupation(iscoCode string) (interface{}, error) {
 	// TODO - update GetOccupation with the required logic for this service method.
 	// Add api_default_service.go to the .openapi-generator-ignore to avoid overwriting this service implementation when updating open api generation.
 	return nil, errors.New("service method 'GetOccupation' not implemented")
 }
 
 // GetTotalPopulation - total_population
-func (s *DefaultApiService) GetTotalPopulation(inlineObject2 InlineObject2) (interface{}, error) {
+func (s *DefaultApiService) GetTotalPopulation(prefCode float32, cityCode float32) (interface{}, error) {
 	// TODO - update GetTotalPopulation with the required logic for this service method.
 	// Add api_default_service.go to the .openapi-generator-ignore to avoid overwriting this service implementation when updating open api generation.
 	return nil, errors.New("service method 'GetTotalPopulation' not implemented")

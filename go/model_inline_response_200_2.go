@@ -9,10 +9,10 @@
 
 package openapi
 
-type InlineObject1 struct {
+type InlineResponse2002 struct {
 
 	// メッセージ
 	Message string `json:"message,omitempty"`
 
-	Result OccupationMiddleCategory `json:"result,omitempty"`
+	Result ResultTotalPopulation `json:"result,omitempty"`
 }

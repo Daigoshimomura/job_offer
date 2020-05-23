@@ -8,87 +8,106 @@ paths:
   /job_offer:
     get:
       operationId: get-job_offer
-      requestBody:
-        $ref: '#/components/requestBodies/inline_object'
-        content:
-          application/json:
-            examples: {}
-            schema:
-              properties:
-                message:
-                  description: |
-                    メッセージ
-                  type: string
-                result:
-                  $ref: '#/components/schemas/result_joboffer'
-              type: object
+      parameters:
+      - description: 都道府県コード
+        explode: true
+        in: query
+        name: prefCode
+        required: true
+        schema:
+          type: number
+        style: form
+      - description: 年度
+        explode: true
+        in: query
+        name: year
+        required: true
+        schema:
+          type: number
+        style: form
+      - description: 表示内容
+        explode: true
+        in: query
+        name: matter
+        required: true
+        schema:
+          type: number
+        style: form
+      - description: 表示分類
+        explode: true
+        in: query
+        name: class
+        required: true
+        schema:
+          type: number
+        style: form
       responses:
         "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
           description: OK
       summary: job_offer
       tags: []
   /occupation:
     get:
       operationId: get-occupation
-      parameters: []
-      requestBody:
-        $ref: '#/components/requestBodies/inline_object_1'
-        content:
-          application/json:
-            examples: {}
-            schema:
-              properties:
-                message:
-                  description: メッセージ
-                  type: string
-                result:
-                  $ref: '#/components/schemas/occupation_middle_category'
-              type: object
+      parameters:
+      - description: 職業大分類
+        explode: true
+        in: query
+        name: iscoCode
+        required: true
+        schema:
+          type: string
+        style: form
       responses:
         "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_1'
           description: OK
       summary: occupation
       tags: []
   /total_population:
     get:
       operationId: get-total_population
-      requestBody:
-        $ref: '#/components/requestBodies/inline_object_2'
-        content:
-          application/json:
-            examples: {}
-            schema:
-              properties:
-                message:
-                  description: メッセージ
-                  type: string
-                'result ':
-                  $ref: '#/components/schemas/result__total_population'
-              type: object
+      parameters:
+      - description: 都道府県コード
+        explode: true
+        in: query
+        name: prefCode
+        required: true
+        schema:
+          type: number
+        style: form
+      - description: 市区町村コード
+        explode: true
+        in: query
+        name: cityCode
+        required: true
+        schema:
+          type: number
+        style: form
       responses:
         "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_2'
           description: OK
       summary: total_population
       tags: []
 components:
-  requestBodies:
-    inline_object_1:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/inline_object_1'
-    inline_object:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/inline_object'
-    inline_object_2:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/inline_object_2'
   schemas:
     result_joboffer:
+      example:
+        finding_employment_count: 1.4658129805029452
+        broadName: broadName
+        valid_jobfinder: 6.027456183070403
+        valid_job_offer_number: 0.8008281904610115
       properties:
         broadName:
           description: 職業大分類1
@@ -102,16 +121,25 @@ components:
         finding_employment_count:
           description: 就職件数
           type: number
-    inline_object:
+    inline_response_200:
+      example:
+        result:
+          finding_employment_count: 1.4658129805029452
+          broadName: broadName
+          valid_jobfinder: 6.027456183070403
+          valid_job_offer_number: 0.8008281904610115
+        message: message
       properties:
         message:
-          description: |
-            メッセージ
+          description: メッセージ
           type: string
         result:
           $ref: '#/components/schemas/result_joboffer'
-      type: object
     occupation_middle_category:
+      example:
+        ismcoCode: ismcoCode
+        iscoCode: iscoCode
+        ismcoName: ismcoName
       properties:
         iscoCode:
           description: 職業大分類コード
@@ -122,15 +150,24 @@ components:
         ismcoName:
           description: 職業中分類名
           type: string
-    inline_object_1:
+    inline_response_200_1:
+      example:
+        result:
+          ismcoCode: ismcoCode
+          iscoCode: iscoCode
+          ismcoName: ismcoName
+        message: message
       properties:
         message:
           description: メッセージ
           type: string
         result:
           $ref: '#/components/schemas/occupation_middle_category'
-      type: object
     result__total_population:
+      example:
+        bitrh_number: 6.027456183070403
+        died_number: 1.4658129805029452
+        total_population: 0.8008281904610115
       properties:
         total_population:
           description: 総人口
@@ -141,11 +178,16 @@ components:
         died_number:
           description: 死亡数
           type: number
-    inline_object_2:
+    inline_response_200_2:
+      example:
+        result:
+          bitrh_number: 6.027456183070403
+          died_number: 1.4658129805029452
+          total_population: 0.8008281904610115
+        message: message
       properties:
         message:
           description: メッセージ
           type: string
-        'result ':
+        result:
           $ref: '#/components/schemas/result__total_population'
-      type: object
