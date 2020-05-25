@@ -10,11 +10,17 @@
 package openapi
 
 import (
+	"encoding/json"
 	"errors"
+	"fmt"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"net/http/httputil"
 )
 
 // DefaultApiService is a service that implents the logic for the DefaultApiServicer
-// This service should implement the business logic for every endpoint for the DefaultApi API. 
+// This service should implement the business logic for every endpoint for the DefaultApi API.
 // Include any external packages or services that will be required by this service.
 type DefaultApiService struct {
 }
@@ -25,10 +31,63 @@ func NewDefaultApiService() DefaultApiServicer {
 }
 
 // GetJobOffer - job_offer
-func (s *DefaultApiService) GetJobOffer(prefCode float32, year float32, matter float32, class float32) (interface{}, error) {
+func (s *DefaultApiService) GetJobOffer(prefCode string, year string, matter string, class string) (interface{}, error) {
 	// TODO - update GetJobOffer with the required logic for this service method.
 	// Add api_default_service.go to the .openapi-generator-ignore to avoid overwriting this service implementation when updating open api generation.
-	return nil, errors.New("service method 'GetJobOffer' not implemented")
+	//リクエスト実行
+	url := "https://opendata.resas-portal.go.jp/api/v1/regionalEmploy/analysis/portfolio"
+	req, _ := http.NewRequest("GET", url, nil)
+
+	header(req)
+
+	query := req.URL.Query()
+
+	fmt.Println(req.URL.String())
+
+	//URLの値を追加
+	query.Add("prefCode", prefCode)
+	query.Add("year", year)
+	query.Add("matter", matter)
+	query.Add("class", class)
+	req.URL.RawQuery = query.Encode()
+
+	fmt.Println(req.URL.String())
+
+	//コンテント確認
+	client := new(http.Client)
+	resp, err := client.Do(req)
+	if err != nil {
+		panic(err)
+	}
+	dumpResp, _ := httputil.DumpResponse(resp, true)
+	fmt.Printf("%s", dumpResp)
+
+	defer resp.Body.Close()
+	byteArray, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var data InlineResponse200
+
+	if err := json.Unmarshal(byteArray, &data); err != nil {
+		fmt.Println("JSON Unmarshal error:", err)
+		if err, ok := err.(*json.SyntaxError); ok {
+			fmt.Println(string(byteArray[err.Offset-15 : err.Offset+15]))
+		}
+	}
+	//	res := &ResultJoboffer{BroadName: }
+	fmt.Println("データ中身")
+
+	for _, p := range data.Result.Data {
+		
+			code := p.BroadCode
+			fmt.Println(code)
+		
+	}
+	fmt.Println("終わり")
+
+	return data, nil
 }
 
 // GetOccupation - occupation
@@ -43,4 +102,9 @@ func (s *DefaultApiService) GetTotalPopulation(prefCode float32, cityCode float3
 	// TODO - update GetTotalPopulation with the required logic for this service method.
 	// Add api_default_service.go to the .openapi-generator-ignore to avoid overwriting this service implementation when updating open api generation.
 	return nil, errors.New("service method 'GetTotalPopulation' not implemented")
+}
+
+func header(r *http.Request) {
+	r.Header.Set("X-API-KEY", "25gLN3MZoSYvg8iWWcl7iI26ioeJQgGUt6JVb1Hn")
+	r.Header.Set("Content-Type", "application/json;charset=UTF-8")
 }
