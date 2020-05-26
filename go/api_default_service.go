@@ -80,14 +80,16 @@ func (s *DefaultApiService) GetJobOffer(prefCode string, year string, matter str
 	fmt.Println("データ中身")
 
 	for _, p := range data.Result.Data {
-		
-			code := p.BroadCode
-			fmt.Println(code)
-		
+
+		code := p.BroadCode
+		fmt.Println(code)
+
 	}
 	fmt.Println("終わり")
 
-	return data, nil
+	res := "PrefCode"
+
+	return res, nil
 }
 
 // GetOccupation - occupation
