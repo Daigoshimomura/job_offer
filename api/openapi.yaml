@@ -15,7 +15,7 @@ paths:
         name: prefCode
         required: true
         schema:
-          type: number
+          type: string
         style: form
       - description: 年度
         explode: true
@@ -23,7 +23,7 @@ paths:
         name: year
         required: true
         schema:
-          type: number
+          type: string
         style: form
       - description: 表示内容
         explode: true
@@ -31,7 +31,7 @@ paths:
         name: matter
         required: true
         schema:
-          type: number
+          type: string
         style: form
       - description: 表示分類
         explode: true
@@ -39,7 +39,7 @@ paths:
         name: class
         required: true
         schema:
-          type: number
+          type: string
         style: form
       responses:
         "200":
@@ -81,7 +81,7 @@ paths:
         name: prefCode
         required: true
         schema:
-          type: number
+          type: string
         style: form
       - description: 市区町村コード
         explode: true
@@ -89,7 +89,7 @@ paths:
         name: cityCode
         required: true
         schema:
-          type: number
+          type: string
         style: form
       responses:
         "200":
@@ -104,37 +104,89 @@ components:
   schemas:
     result_joboffer:
       example:
-        finding_employment_count: 1.4658129805029452
+        middleCode: middleCode
         broadName: broadName
-        valid_jobfinder: 6.027456183070403
-        valid_job_offer_number: 0.8008281904610115
+        middleName: middleName
+        broadCode: broadCode
+        value: 0.8008281904610115
       properties:
-        broadName:
-          description: 職業大分類1
+        broadCode:
+          description: 職業大分類コード
           type: string
-        valid_job_offer_number:
-          description: 有効求人数
+        broadName:
+          description: 職業大分類名
+          type: string
+        middleCode:
+          description: 職業中分類コード
+          type: string
+        middleName:
+          description: 職業中分類名
+          type: string
+        value:
+          description: 対象の求人・求職者数
           type: number
-        valid_jobfinder:
-          description: 有効就職者
+    nest_joboffer:
+      example:
+        prefCode: prefCode
+        otherscount: 1.4658129805029452
+        data:
+          middleCode: middleCode
+          broadName: broadName
+          middleName: middleName
+          broadCode: broadCode
+          value: 0.8008281904610115
+        year: year
+        prefName: prefName
+        allcount: 6.027456183070403
+        matter: matter
+        class: class
+      properties:
+        prefCode:
+          description: 対象の県コード
+          type: string
+        prefName:
+          description: 対象の県名
+          type: string
+        year:
+          description: 年度
+          type: string
+        matter:
+          description: 表示内容
+          type: string
+        class:
+          description: 表示分類
+          type: string
+        data:
+          $ref: '#/components/schemas/result_joboffer'
+        allcount:
+          description: 総合計
           type: number
-        finding_employment_count:
-          description: 就職件数
+        otherscount:
+          description: その他の分類合計
           type: number
     inline_response_200:
       example:
         result:
-          finding_employment_count: 1.4658129805029452
-          broadName: broadName
-          valid_jobfinder: 6.027456183070403
-          valid_job_offer_number: 0.8008281904610115
+          prefCode: prefCode
+          otherscount: 1.4658129805029452
+          data:
+            middleCode: middleCode
+            broadName: broadName
+            middleName: middleName
+            broadCode: broadCode
+            value: 0.8008281904610115
+          year: year
+          prefName: prefName
+          allcount: 6.027456183070403
+          matter: matter
+          class: class
         message: message
       properties:
         message:
           description: メッセージ
           type: string
         result:
-          $ref: '#/components/schemas/result_joboffer'
+          $ref: '#/components/schemas/nest_joboffer'
     occupation_middle_category:
       example:
         ismcoCode: ismcoCode
@@ -165,29 +217,54 @@ components:
           $ref: '#/components/schemas/occupation_middle_category'
     result__total_population:
       example:
-        bitrh_number: 6.027456183070403
-        died_number: 1.4658129805029452
-        total_population: 0.8008281904610115
+        year: 6.027456183070403
+        value: 1.4658129805029452
       properties:
-        total_population:
-          description: 総人口
+        year:
+          description: 年
           type: number
-        bitrh_number:
-          description: 出生数
+        value:
+          description: 人口(千人)
           type: number
-        died_number:
-          description: 死亡数
+    nest1_total_population:
+      example:
+        data:
+          year: 6.027456183070403
+          value: 1.4658129805029452
+        label: label
+      properties:
+        label:
+          description: ラベル + 総人口・転入数・転出数・出生数・死亡数
+          type: string
+        data:
+          $ref: '#/components/schemas/result__total_population'
+    nest_total_population:
+      example:
+        data:
+          data:
+            year: 6.027456183070403
+            value: 1.4658129805029452
+          label: label
+        boundaryYear: 0.8008281904610115
+      properties:
+        boundaryYear:
+          description: 実績値と推計値の区切り年
           type: number
+        data:
+          $ref: '#/components/schemas/nest1_total_population'
     inline_response_200_2:
       example:
         result:
-          bitrh_number: 6.027456183070403
-          died_number: 1.4658129805029452
-          total_population: 0.8008281904610115
+          data:
+            data:
+              year: 6.027456183070403
+              value: 1.4658129805029452
+            label: label
+          boundaryYear: 0.8008281904610115
         message: message
       properties:
         message:
           description: メッセージ
           type: string
         result:
-          $ref: '#/components/schemas/result__total_population'
+          $ref: '#/components/schemas/nest_total_population'

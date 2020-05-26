@@ -34,60 +34,87 @@ func NewDefaultApiService() DefaultApiServicer {
 func (s *DefaultApiService) GetJobOffer(prefCode string, year string, matter string, class string) (interface{}, error) {
 	// TODO - update GetJobOffer with the required logic for this service method.
 	// Add api_default_service.go to the .openapi-generator-ignore to avoid overwriting this service implementation when updating open api generation.
-	//リクエスト実行
-	url := "https://opendata.resas-portal.go.jp/api/v1/regionalEmploy/analysis/portfolio"
-	req, _ := http.NewRequest("GET", url, nil)
 
-	header(req)
+	//有効求職者数
+	var valid_job_seeker_number string = "1"
+	//有効求人数
+	var valid_job_offer_number string = "4"
+	//就職件数
+	var finding_employment_count string = "5"
+	//matter設定用
+	var matter_count = 1
 
-	query := req.URL.Query()
+	//画面出力用
+	var res []Result_joboffer
 
-	fmt.Println(req.URL.String())
+	for r := 0; r < 3; r++ {
+		url := "https://opendata.resas-portal.go.jp/api/v1/regionalEmploy/analysis/portfolio"
+		req, _ := http.NewRequest("GET", url, nil)
 
-	//URLの値を追加
-	query.Add("prefCode", prefCode)
-	query.Add("year", year)
-	query.Add("matter", matter)
-	query.Add("class", class)
-	req.URL.RawQuery = query.Encode()
+		header(req)
 
-	fmt.Println(req.URL.String())
+		query := req.URL.Query()
 
-	//コンテント確認
-	client := new(http.Client)
-	resp, err := client.Do(req)
-	if err != nil {
-		panic(err)
-	}
-	dumpResp, _ := httputil.DumpResponse(resp, true)
-	fmt.Printf("%s", dumpResp)
+		fmt.Println(req.URL.String())
 
-	defer resp.Body.Close()
-	byteArray, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		log.Fatal(err)
-	}
+		//URLの値を追加
+		query.Add("prefCode", prefCode)
+		query.Add("year", year)
 
-	var data InlineResponse200
+		//matter割り振り
+		if matter_count == 1 {
+			query.Add("matter", valid_job_seeker_number)
+		} else if matter_count == 4 {
+			query.Add("matter", valid_job_offer_number)
+		} else {
+			query.Add("matter", finding_employment_count)
+		}
 
-	if err := json.Unmarshal(byteArray, &data); err != nil {
-		fmt.Println("JSON Unmarshal error:", err)
-		if err, ok := err.(*json.SyntaxError); ok {
-			fmt.Println(string(byteArray[err.Offset-15 : err.Offset+15]))
+		query.Add("class", class)
+		req.URL.RawQuery = query.Encode()
+
+		fmt.Println(req.URL.String())
+
+		//コンテント確認
+		client := new(http.Client)
+		resp, err := client.Do(req)
+		if err != nil {
+			panic(err)
+		}
+		dumpResp, _ := httputil.DumpResponse(resp, true)
+		fmt.Printf("%s", dumpResp)
+
+		defer resp.Body.Close()
+		byteArray, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		var data InlineResponse200
+
+		if err := json.Unmarshal(byteArray, &data); err != nil {
+			fmt.Println("JSON Unmarshal error:", err)
+			if err, ok := err.(*json.SyntaxError); ok {
+				fmt.Println(string(byteArray[err.Offset-15 : err.Offset+15]))
+			}
+		}
+
+		for i, p := range data.Result.Data {
+			if i > 4 {
+				break
+			}
+			res[0].Occupation = p.BroadCode
+			fmt.Printf("i=%v", i)
+			fmt.Println(res)
+			i++
+		}
+
+		if matter_count == 1 {
+			matter_count = 4
+		} else {
+			matter_count = 5
 		}
 	}
-	//	res := &ResultJoboffer{BroadName: }
-	fmt.Println("データ中身")
-
-	for _, p := range data.Result.Data {
-
-		code := p.BroadCode
-		fmt.Println(code)
-
-	}
-	fmt.Println("終わり")
-
-	res := "PrefCode"
 
 	return res, nil
 }
@@ -100,7 +127,7 @@ func (s *DefaultApiService) GetOccupation(iscoCode string) (interface{}, error) 
 }
 
 // GetTotalPopulation - total_population
-func (s *DefaultApiService) GetTotalPopulation(prefCode float32, cityCode float32) (interface{}, error) {
+func (s *DefaultApiService) GetTotalPopulation(prefCode string, cityCode string) (interface{}, error) {
 	// TODO - update GetTotalPopulation with the required logic for this service method.
 	// Add api_default_service.go to the .openapi-generator-ignore to avoid overwriting this service implementation when updating open api generation.
 	return nil, errors.New("service method 'GetTotalPopulation' not implemented")

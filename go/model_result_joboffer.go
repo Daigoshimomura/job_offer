@@ -9,19 +9,20 @@
 
 package openapi
 
+type ResultJoboffer struct {
 
+	// 職業大分類コード
+	BroadCode string `json:"broadCode,omitempty"`
 
-// type ResultJoboffer struct {
+	// 職業大分類名
+	BroadName string `json:"broadName,omitempty"`
 
-// 	// 職業大分類1
-// 	BroadName string `json:"broadName,omitempty"`
+	// 職業中分類コード
+	MiddleCode string `json:"middleCode,omitempty"`
 
-// 	// 有効求人数
-// 	ValidJobOfferNumber float32 `json:"valid_job_offer_number,omitempty"`
+	// 職業中分類名
+	MiddleName string `json:"middleName,omitempty"`
 
-// 	// 有効就職者
-// 	ValidJobfinder float32 `json:"valid_jobfinder,omitempty"`
-
-// 	// 就職件数
-// 	FindingEmploymentCount float32 `json:"finding_employment_count,omitempty"`
-// }
+	// 対象の求人・求職者数
+	Value float32 `json:"value,omitempty"`
+}

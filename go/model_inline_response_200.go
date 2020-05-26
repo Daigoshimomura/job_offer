@@ -12,37 +12,7 @@ package openapi
 type InlineResponse200 struct {
 
 	// メッセージ
-	Message string `json:"message"`
+	Message string `json:"message,omitempty"`
 
-	Result ResultJoboffer `json:"result"`
-}
-
-type ResultJoboffer struct {
-	PrefCode string `json:"prefCode"`
-
-	PrefName string `json:"prefName"`
-
-	Year string `json:"year"`
-
-	Matter string `json:"matter"`
-
-	Class string `json:"class"`
-
-	Data []Result `json:"data"`
-
-	Allcount int `json:"allcount"`
-
-	Otherscount int `json:"otherscount"`
-}
-
-type Result struct {
-	BroadCode string `json:"broadCode"`
-	// 職業大分類1
-	BroadName string `json:"broadName"`
-
-	MiddleCode string `json:"middleCode"`
-
-	MiddleName string `json:"middleName"`
-
-	Value int `json:"value"`
+	Result NestJoboffer `json:"result,omitempty"`
 }

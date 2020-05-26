@@ -9,11 +9,10 @@
 
 package openapi
 
-type ResultTotalPopulation struct {
+type Nest1TotalPopulation struct {
 
-	// 年
-	Year float32 `json:"year,omitempty"`
+	// ラベル + 総人口・転入数・転出数・出生数・死亡数
+	Label string `json:"label,omitempty"`
 
-	// 人口(千人)
-	Value float32 `json:"value,omitempty"`
+	Data ResultTotalPopulation `json:"data,omitempty"`
 }

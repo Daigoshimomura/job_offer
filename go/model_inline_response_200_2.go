@@ -14,5 +14,5 @@ type InlineResponse2002 struct {
 	// メッセージ
 	Message string `json:"message,omitempty"`
 
-	Result ResultTotalPopulation `json:"result,omitempty"`
+	Result NestTotalPopulation `json:"result,omitempty"`
 }

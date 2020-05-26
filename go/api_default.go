@@ -12,8 +12,8 @@ package openapi
 import (
 	//"encoding/json"
 	"net/http"
-	"strconv"
 	"strings"
+
 	//"github.com/gorilla/mux"
 )
 
@@ -24,12 +24,12 @@ type DefaultApiController struct {
 
 // NewDefaultApiController creates a default api controller
 func NewDefaultApiController(s DefaultApiServicer) Router {
-	return &DefaultApiController{service: s}
+	return &DefaultApiController{ service: s }
 }
 
 // Routes returns all of the api route for the DefaultApiController
 func (c *DefaultApiController) Routes() Routes {
-	return Routes{
+	return Routes{ 
 		{
 			"GetJobOffer",
 			strings.ToUpper("Get"),
@@ -52,25 +52,23 @@ func (c *DefaultApiController) Routes() Routes {
 }
 
 // GetJobOffer - job_offer
-func (c *DefaultApiController) GetJobOffer(w http.ResponseWriter, r *http.Request) {
+func (c *DefaultApiController) GetJobOffer(w http.ResponseWriter, r *http.Request) { 
 	query := r.URL.Query()
-
 	prefCode := query.Get("prefCode")
 	year := query.Get("year")
 	matter := query.Get("matter")
 	class := query.Get("class")
-
 	result, err := c.service.GetJobOffer(prefCode, year, matter, class)
 	if err != nil {
 		w.WriteHeader(500)
 		return
 	}
-
+	
 	EncodeJSONResponse(result, nil, w)
 }
 
 // GetOccupation - occupation
-func (c *DefaultApiController) GetOccupation(w http.ResponseWriter, r *http.Request) {
+func (c *DefaultApiController) GetOccupation(w http.ResponseWriter, r *http.Request) { 
 	query := r.URL.Query()
 	iscoCode := query.Get("iscoCode")
 	result, err := c.service.GetOccupation(iscoCode)
@@ -78,25 +76,20 @@ func (c *DefaultApiController) GetOccupation(w http.ResponseWriter, r *http.Requ
 		w.WriteHeader(500)
 		return
 	}
-
+	
 	EncodeJSONResponse(result, nil, w)
 }
 
 // GetTotalPopulation - total_population
-func (c *DefaultApiController) GetTotalPopulation(w http.ResponseWriter, r *http.Request) {
+func (c *DefaultApiController) GetTotalPopulation(w http.ResponseWriter, r *http.Request) { 
 	query := r.URL.Query()
-	//stringからfloat32に変換
-	sprefCode, _ := strconv.ParseFloat(query.Get("prefCode"), 32)
-	var prefCode float32 = float32(sprefCode)
-
-	scityCode, _ := strconv.ParseFloat(query.Get("cityCode"), 32)
-	var cityCode float32 = float32(scityCode)
-
+	prefCode := query.Get("prefCode")
+	cityCode := query.Get("cityCode")
 	result, err := c.service.GetTotalPopulation(prefCode, cityCode)
 	if err != nil {
 		w.WriteHeader(500)
 		return
 	}
-
+	
 	EncodeJSONResponse(result, nil, w)
 }

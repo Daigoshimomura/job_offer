@@ -9,11 +9,10 @@
 
 package openapi
 
-type ResultTotalPopulation struct {
+type NestTotalPopulation struct {
 
-	// 年
-	Year float32 `json:"year,omitempty"`
+	// 実績値と推計値の区切り年
+	BoundaryYear float32 `json:"boundaryYear,omitempty"`
 
-	// 人口(千人)
-	Value float32 `json:"value,omitempty"`
+	Data Nest1TotalPopulation `json:"data,omitempty"`
 }

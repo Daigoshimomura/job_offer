@@ -12,7 +12,7 @@ package openapi
 type InlineResponse2001 struct {
 
 	// メッセージ
-	Message string `json:"message"`
+	Message string `json:"message,omitempty"`
 
-	Result OccupationMiddleCategory `json:"result"`
+	Result OccupationMiddleCategory `json:"result,omitempty"`
 }
