@@ -7,12 +7,12 @@ type Result_joboffer struct {
 	Occupation string 
 
 	//有効求職者数
-	Valid_job_seeker int 
-
-	//有効求人数
-	valid_job_offer　int 
+	Valid_job_seeker float32 
 
 	//就職件数
-	Finding_employment_count int 
+	Finding_employment_count float32
+
+	//有効求人数
+	Valid_job_offer float32
 
 }

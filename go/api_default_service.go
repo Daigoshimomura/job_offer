@@ -41,11 +41,12 @@ func (s *DefaultApiService) GetJobOffer(prefCode string, year string, matter str
 	var valid_job_offer_number string = "4"
 	//就職件数
 	var finding_employment_count string = "5"
-	//matter設定用
-	var matter_count = 1
 
 	//画面出力用
-	var res []Result_joboffer
+	// type result_joboffers []*Result_joboffer
+	// var res result_joboffers
+
+	var res [5]Result_joboffer
 
 	for r := 0; r < 3; r++ {
 		url := "https://opendata.resas-portal.go.jp/api/v1/regionalEmploy/analysis/portfolio"
@@ -62,9 +63,9 @@ func (s *DefaultApiService) GetJobOffer(prefCode string, year string, matter str
 		query.Add("year", year)
 
 		//matter割り振り
-		if matter_count == 1 {
+		if r == 0 {
 			query.Add("matter", valid_job_seeker_number)
-		} else if matter_count == 4 {
+		} else if r == 1 {
 			query.Add("matter", valid_job_offer_number)
 		} else {
 			query.Add("matter", finding_employment_count)
@@ -103,17 +104,22 @@ func (s *DefaultApiService) GetJobOffer(prefCode string, year string, matter str
 			if i > 4 {
 				break
 			}
-			res[0].Occupation = p.BroadCode
+			if r == 0 {
+				//有効就職者
+				res[i].Occupation = p.BroadName
+				res[i].Valid_job_seeker = p.Value
+			}else if r == 1{
+				//有効求人
+				res[i].Valid_job_offer = p.Value 
+			}else{
+				//就職件数
+				res[i].Finding_employment_count = p.Value
+			}
 			fmt.Printf("i=%v", i)
 			fmt.Println(res)
 			i++
 		}
 
-		if matter_count == 1 {
-			matter_count = 4
-		} else {
-			matter_count = 5
-		}
 	}
 
 	return res, nil
