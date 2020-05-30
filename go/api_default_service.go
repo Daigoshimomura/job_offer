@@ -11,7 +11,6 @@ package openapi
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -32,94 +31,33 @@ func NewDefaultApiService() DefaultApiServicer {
 
 // GetJobOffer - job_offer
 func (s *DefaultApiService) GetJobOffer(prefCode string, year string, matter string, class string) (interface{}, error) {
-	// TODO - update GetJobOffer with the required logic for this service method.
-	// Add api_default_service.go to the .openapi-generator-ignore to avoid overwriting this service implementation when updating open api generation.
-
 	//有効求職者数
-	var valid_job_seeker_number string = "1"
+	const validJobSeekerNumber string = "1"
 	//有効求人数
-	var valid_job_offer_number string = "4"
+	const validJobOfferNumber string = "4"
 	//就職件数
-	var finding_employment_count string = "5"
+	const findingEmploymentCount string = "5"
 
-	//画面出力用
-	// type result_joboffers []*Result_joboffer
-	// var res result_joboffers
+	// このAPIでの取得数（上位5件）
+	const maxGetCount = 5
 
-	var res [5]Result_joboffer
+	var res [maxGetCount]Result_joboffer
 
-	for r := 0; r < 3; r++ {
-		url := "https://opendata.resas-portal.go.jp/api/v1/regionalEmploy/analysis/portfolio"
-		req, _ := http.NewRequest("GET", url, nil)
+	var jobSeekerNumberRes = CallPortfolio(prefCode, year, validJobSeekerNumber, class)
+	var jobOfferNumberRes = CallPortfolio(prefCode, year, validJobOfferNumber, class)
+	var employmentCount = CallPortfolio(prefCode, year, findingEmploymentCount, class)
 
-		header(req)
-
-		query := req.URL.Query()
-
-		fmt.Println(req.URL.String())
-
-		//URLの値を追加
-		query.Add("prefCode", prefCode)
-		query.Add("year", year)
-
-		//matter割り振り
-		if r == 0 {
-			query.Add("matter", valid_job_seeker_number)
-		} else if r == 1 {
-			query.Add("matter", valid_job_offer_number)
-		} else {
-			query.Add("matter", finding_employment_count)
-		}
-
-		query.Add("class", class)
-		req.URL.RawQuery = query.Encode()
-
-		fmt.Println(req.URL.String())
-
-		//コンテント確認
-		client := new(http.Client)
-		resp, err := client.Do(req)
-		if err != nil {
-			panic(err)
-		}
-		dumpResp, _ := httputil.DumpResponse(resp, true)
-		fmt.Printf("%s", dumpResp)
-
-		defer resp.Body.Close()
-		byteArray, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		var data InlineResponse200
-
-		if err := json.Unmarshal(byteArray, &data); err != nil {
-			fmt.Println("JSON Unmarshal error:", err)
-			if err, ok := err.(*json.SyntaxError); ok {
-				fmt.Println(string(byteArray[err.Offset-15 : err.Offset+15]))
-			}
-		}
-
-		for i, p := range data.Result.Data {
-			if i > 4 {
-				break
-			}
-			if r == 0 {
-				//有効就職者
-				res[i].Occupation = p.BroadName
-				res[i].Valid_job_seeker = p.Value
-			}else if r == 1{
-				//有効求人
-				res[i].Valid_job_offer = p.Value 
-			}else{
-				//就職件数
-				res[i].Finding_employment_count = p.Value
-			}
-			fmt.Printf("i=%v", i)
-			fmt.Println(res)
-			i++
-		}
-
+	for i := 0; i < maxGetCount; i++ {
+		//職業
+		res[i].Occupation = jobSeekerNumberRes.Result.Data[i].BroadName
+		//有効就職者
+		res[i].Valid_job_seeker = jobSeekerNumberRes.Result.Data[i].Value
+		//有効求人
+		broadcode := SearchBroadCode(jobSeekerNumberRes, jobOfferNumberRes, i)
+		res[i].Valid_job_offer = jobOfferNumberRes.Result.Data[broadcode].Value
+		//就職件数
+		broadcode = SearchBroadCode(jobSeekerNumberRes, employmentCount, i)
+		res[i].Finding_employment_count = employmentCount.Result.Data[broadcode].Value
 	}
 
 	return res, nil
@@ -127,19 +65,225 @@ func (s *DefaultApiService) GetJobOffer(prefCode string, year string, matter str
 
 // GetOccupation - occupation
 func (s *DefaultApiService) GetOccupation(iscoCode string) (interface{}, error) {
-	// TODO - update GetOccupation with the required logic for this service method.
-	// Add api_default_service.go to the .openapi-generator-ignore to avoid overwriting this service implementation when updating open api generation.
-	return nil, errors.New("service method 'GetOccupation' not implemented")
+	//このAPIでの取得数（上位5件）
+	const maxGetCount = 5
+
+	var res [maxGetCount]Result_occupation
+
+	var MiddleRes = CallMiddle(iscoCode)
+
+	for i := 0; i < maxGetCount; i++ {
+		//職業中分類コード
+		res[i].IsmcoCode = MiddleRes.Result[i].IsmcoCode
+		//職業中分類名
+		res[i].IsmcoName = MiddleRes.Result[i].IsmcoName
+	}
+
+	return res, nil
 }
 
-// GetTotalPopulation - total_population
+// GetTotalPopulation - total_population?cityCode=11362&prefCode=11
 func (s *DefaultApiService) GetTotalPopulation(prefCode string, cityCode string) (interface{}, error) {
-	// TODO - update GetTotalPopulation with the required logic for this service method.
-	// Add api_default_service.go to the .openapi-generator-ignore to avoid overwriting this service implementation when updating open api generation.
-	return nil, errors.New("service method 'GetTotalPopulation' not implemented")
+	//このAPIでの取得数（上位5件)
+	const maxGetCount = 5
+	const total_population_Name = "総人口"
+	const birth_number_Name = "出生数"
+	const died_number_Name = "死亡数"
+
+	var res [maxGetCount]Result_total_population
+
+	var EstimateRes = CallEstimate(prefCode, cityCode)
+
+	var total_population_Number = SearchtargetName(total_population_Name, EstimateRes)
+	var birth_number_Number = SearchtargetName(birth_number_Name, EstimateRes)
+	var died_number_Number = SearchtargetName(died_number_Name, EstimateRes)
+
+	for i := 0; i < maxGetCount; i++ {
+		//年
+		res[i].Year = EstimateRes.Result.Data[total_population_Number].Data[i].Year
+		//総人口
+		targetYear := SearchtargetYear(EstimateRes, total_population_Number, i, total_population_Number)
+		fmt.Println(targetYear)
+		res[i].Total_population = EstimateRes.Result.Data[total_population_Number].Data[targetYear].Value
+		//出生数
+		targetYear = SearchtargetYear(EstimateRes, total_population_Number, i, birth_number_Number)
+		fmt.Println(targetYear)
+		res[i].Birth_number = EstimateRes.Result.Data[birth_number_Number].Data[targetYear].Value
+		//死亡数
+		targetYear = SearchtargetYear(EstimateRes, total_population_Number, i, died_number_Number)
+		fmt.Println(targetYear)
+		res[i].Died_number = EstimateRes.Result.Data[died_number_Number].Data[targetYear].Value
+	}
+
+	return res, nil
 }
 
-func header(r *http.Request) {
+//　job_offercall
+func CallPortfolio(prefCode string, year string, matter string, class string) InlineResponse200 {
+
+	url := "https://opendata.resas-portal.go.jp/api/v1/regionalEmploy/analysis/portfolio"
+	req, _ := http.NewRequest("GET", url, nil)
+
+	Header(req)
+
+	query := req.URL.Query()
+
+	//URLの値を追加
+	query.Add("prefCode", prefCode)
+	query.Add("year", year)
+	query.Add("matter", matter)
+	query.Add("class", class)
+	req.URL.RawQuery = query.Encode()
+
+	client := new(http.Client)
+	resp, err := client.Do(req)
+	if err != nil {
+		panic(err)
+	}
+
+	//コンテント確認
+	dumpResp, _ := httputil.DumpResponse(resp, true)
+	fmt.Printf("%s", dumpResp)
+
+	defer resp.Body.Close()
+	byteArray, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var data InlineResponse200
+
+	if err := json.Unmarshal(byteArray, &data); err != nil {
+		fmt.Println("JSON Unmarshal error:", err)
+		if err, ok := err.(*json.SyntaxError); ok {
+			fmt.Println(string(byteArray[err.Offset-15 : err.Offset+15]))
+		}
+	}
+	return data
+
+}
+
+//　有効就職者と同じ県コードを探して県コードを返す。
+func SearchBroadCode(BroadCode InlineResponse200, testing_target InlineResponse200, i int) int {
+	var target_Code int
+
+	for k, r := range testing_target.Result.Data {
+		if r.BroadCode == BroadCode.Result.Data[i].BroadCode {
+			target_Code = k
+		}
+	}
+	return target_Code
+}
+
+//　occupationcall
+func CallMiddle(iscoCode string) InlineResponse2001 {
+
+	url := "https://opendata.resas-portal.go.jp/api/v1/jobs/middle"
+	req, _ := http.NewRequest("GET", url, nil)
+
+	Header(req)
+
+	query := req.URL.Query()
+
+	//URLの値を追加
+	query.Add("iscoCode", iscoCode)
+	req.URL.RawQuery = query.Encode()
+
+	client := new(http.Client)
+	resp, err := client.Do(req)
+	if err != nil {
+		panic(err)
+	}
+
+	//コンテント確認
+	dumpResp, _ := httputil.DumpResponse(resp, true)
+	fmt.Printf("%s", dumpResp)
+
+	defer resp.Body.Close()
+	byteArray, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var data InlineResponse2001
+
+	if err := json.Unmarshal(byteArray, &data); err != nil {
+		fmt.Println("JSON Unmarshal error:", err)
+		if err, ok := err.(*json.SyntaxError); ok {
+			fmt.Println(string(byteArray[err.Offset-15 : err.Offset+15]))
+		}
+	}
+	return data
+
+}
+
+//　total_populationcall
+func CallEstimate(prefCode string, cityCode string) InlineResponse2002 {
+
+	url := "https://opendata.resas-portal.go.jp/api/v1/population/sum/estimate"
+	req, _ := http.NewRequest("GET", url, nil)
+
+	Header(req)
+
+	query := req.URL.Query()
+
+	//URLの値を追加
+	query.Add("prefCode", prefCode)
+	query.Add("cityCode", cityCode)
+	req.URL.RawQuery = query.Encode()
+
+	client := new(http.Client)
+	resp, err := client.Do(req)
+	if err != nil {
+		panic(err)
+	}
+
+	//コンテント確認
+	dumpResp, _ := httputil.DumpResponse(resp, true)
+	fmt.Printf("%s", dumpResp)
+
+	defer resp.Body.Close()
+	byteArray, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var data InlineResponse2002
+
+	if err := json.Unmarshal(byteArray, &data); err != nil {
+		fmt.Println("JSON Unmarshal error:", err)
+		if err, ok := err.(*json.SyntaxError); ok {
+			fmt.Println(string(byteArray[err.Offset-15 : err.Offset+15]))
+		}
+	}
+	return data
+
+}
+
+// 対象に配列番号を返す
+func SearchtargetName(target_Name string, testing_target InlineResponse2002) int {
+	var target_Name_Number int
+	for k, r := range testing_target.Result.Data {
+		if r.Label == target_Name {
+			target_Name_Number = k
+		}
+	}
+	return target_Name_Number
+}
+
+//対象の年の配列番号を返す。
+func SearchtargetYear(testing_target InlineResponse2002, total_population_Year int, i int, target_Name_Number int) int {
+	var target_year int
+	for k, r := range testing_target.Result.Data[target_Name_Number].Data {
+		if r.Year == testing_target.Result.Data[total_population_Year].Data[i].Year {
+			target_year = k
+		}
+	}
+	return target_year
+}
+
+//　ヘッダー設定
+func Header(r *http.Request) {
 	r.Header.Set("X-API-KEY", "25gLN3MZoSYvg8iWWcl7iI26ioeJQgGUt6JVb1Hn")
 	r.Header.Set("Content-Type", "application/json;charset=UTF-8")
 }

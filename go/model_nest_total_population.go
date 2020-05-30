@@ -14,5 +14,5 @@ type NestTotalPopulation struct {
 	// 実績値と推計値の区切り年
 	BoundaryYear float32 `json:"boundaryYear,omitempty"`
 
-	Data Nest1TotalPopulation `json:"data,omitempty"`
+	Data []Nest1TotalPopulation `json:"data,omitempty"`
 }

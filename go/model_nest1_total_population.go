@@ -14,5 +14,5 @@ type Nest1TotalPopulation struct {
 	// ラベル + 総人口・転入数・転出数・出生数・死亡数
 	Label string `json:"label,omitempty"`
 
-	Data ResultTotalPopulation `json:"data,omitempty"`
+	Data []ResultTotalPopulation `json:"data,omitempty"`
 }

@@ -14,5 +14,5 @@ type InlineResponse2001 struct {
 	// メッセージ
 	Message string `json:"message,omitempty"`
 
-	Result OccupationMiddleCategory `json:"result,omitempty"`
+	Result []OccupationMiddleCategory `json:"result,omitempty"`
 }
